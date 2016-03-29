@@ -15,6 +15,7 @@ public class LaunchActivity extends AppCompatActivity {
     Button startButton;
     Button stopButton;
     Button rebootButton;
+    Button cleanButton;
     EditText timeText;
     long intervalTime = 1800000;
 
@@ -28,6 +29,7 @@ public class LaunchActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ShellUtils.execCommand("mkdir sdcard/ddms", true);
                 if (TextUtils.isEmpty(timeText.getText())){
                     Log.i(TAG, "editText isEmpty ..........");
                 }else{
@@ -60,6 +62,17 @@ public class LaunchActivity extends AppCompatActivity {
             }
         });
 
-        ShellUtils.execCommand("mkdir sdcard/ddms", true);
+
+
+        cleanButton = (Button) findViewById(R.id.cleanButton);
+        cleanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopButton.callOnClick();
+                ShellUtils.execCommand("rm -r sdcard/ddms", true);
+                Log.i(TAG, "clean DDMS log path");
+                Toast.makeText(getApplicationContext(), "clean log complete", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
