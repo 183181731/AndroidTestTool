@@ -43,14 +43,17 @@ public class DDMSService extends Service {
         flags = START_REDELIVER_INTENT;
         return flags;
     }
+    private void killLogcatProcess() {
+        String[] processIdArray = ScriptsCmd.getInstance().getProcess("system/bin/logcat");
+        ScriptsCmd.getInstance().killProcess(processIdArray);
+    }
 
     public void init() {
         stopTask();
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                String[] processIdArray = ScriptsCmd.getInstance().getProcess("system/bin/logcat");
-                ScriptsCmd.getInstance().killProcess(processIdArray);
+                killLogcatProcess();
 
                 final String[] ddmsLogShell = new String[]{
                         "/system/bin/logcat -c",
@@ -106,6 +109,7 @@ public class DDMSService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        killLogcatProcess();
         timerTask.cancel();
         Log.i(TAG, "Destroy DDMS Service");
     }
