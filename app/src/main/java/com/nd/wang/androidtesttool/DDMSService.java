@@ -1,12 +1,9 @@
 package com.nd.wang.androidtesttool;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 import java.util.Timer;
@@ -29,13 +26,9 @@ public class DDMSService extends Service {
 
     Timer timer;
     TimerTask timerTask;
-    Context context;
-    Handler handler;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        context = this;
-        handler = new MyHandler();
         Bundle bundle = intent.getExtras();
         intervalTime = bundle.getLong("time");
         Log.i(TAG, "run OnStartCommand, intervalTime = " + intervalTime);
@@ -75,24 +68,6 @@ public class DDMSService extends Service {
         };
         timer = new Timer();
         timer.schedule(timerTask, 3000, intervalTime);
-    }
-
-
-    private class MyHandler extends Handler {
-
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what){
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     public void stopTask() {
