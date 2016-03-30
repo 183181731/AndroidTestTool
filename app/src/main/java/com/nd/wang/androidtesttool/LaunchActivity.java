@@ -103,6 +103,7 @@ public class LaunchActivity extends AppCompatActivity {
                 });
             }
         }.start();
+        ShellUtils.execCommand("mkdir sdcard/ddms", true);
     }
 
     private final class MyHandler extends Handler{

@@ -12,12 +12,15 @@ import android.util.Log;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by wang on 16-3-28.
- */
 public class DDMSService extends Service {
     final String TAG = "DDMSService";
     long intervalTime;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i(TAG, "DDMSService onCreate");
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
