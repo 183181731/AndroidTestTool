@@ -1,9 +1,13 @@
 package com.nd.wang.androidtesttool;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.Timer;
@@ -33,8 +37,7 @@ public class DDMSService extends Service {
         intervalTime = bundle.getLong("time");
         Log.i(TAG, "run OnStartCommand, intervalTime = " + intervalTime);
         init();
-        flags = START_REDELIVER_INTENT;
-        return flags;
+        return START_NOT_STICKY;
     }
     private void killLogcatProcess() {
         String[] processIdArray = ScriptsCmd.getInstance().getProcess("system/bin/logcat");
@@ -87,5 +90,18 @@ public class DDMSService extends Service {
         killLogcatProcess();
         timerTask.cancel();
         Log.i(TAG, "Destroy DDMS Service");
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.i(TAG, "onTaskRemoved DDMS Service");
+        Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+        restartServiceIntent.putExtra("time", intervalTime);
+        restartServiceIntent.setPackage(getPackageName());
+        PendingIntent restartServicePendingIntent = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Log.i(TAG, "reStart DDMS Service");
+        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, restartServicePendingIntent);
+        super.onTaskRemoved(rootIntent);
     }
 }
